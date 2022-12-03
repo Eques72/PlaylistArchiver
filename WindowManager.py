@@ -1,4 +1,4 @@
-import googleapiclient.discovery
+
 import tkinter as tk
 import tkinter.font as tkF
 
@@ -9,6 +9,7 @@ class WindowManager:
     __colorThemeMain = "#272822"
     __colorThemeLight = "#7a7b75" #When something has focus
     __colorThemeDark = "#3d3e38"  #When something is inactive
+    __mainFont = "Impact"
 
     def __init__(self, startFullscreen: bool):
 
@@ -24,6 +25,7 @@ class WindowManager:
 
         self.mainFrame = tk.LabelFrame(self.window, bg=WindowManager.__colorThemeMain)
         self.mainFrame.pack(fill="both",expand=True)
+        self.state = tk.IntVar()
         pass
 
     def createStartingView(self):
@@ -81,27 +83,50 @@ class WindowManager:
         frameAddress.grid_columnconfigure(index=0,weight=1,uniform='columnA')
         frameAddress.grid_rowconfigure(index=0,weight=2,uniform='rowA') 
         frameAddress.grid_rowconfigure(index=1,weight=1,uniform='rowA') 
-        addressLabel =  tk.Label(frameAddress,background=WindowManager.__colorThemeMain, foreground="#ffffff", text="Enter Youtube channel or Youtube playlist html address:").grid(column=0,row=0,columnspan=2, sticky=tk.NSEW, padx=10, pady=5)   
-        addressField = tk.Entry(frameAddress, ).grid(column=0,row=1,columnspan=2,sticky=tk.NSEW, padx=10, pady=5)
+        tk.Label(frameAddress,background=WindowManager.__colorThemeMain, foreground="#ffffff", text="Enter Youtube channel or Youtube playlist html address:").grid(column=0,row=0,columnspan=2, sticky=tk.NSEW, padx=10, pady=5)   
+        tk.Entry(frameAddress, ).grid(column=0,row=1,columnspan=2,sticky=tk.NSEW, padx=10, pady=5)
         frameAddress.grid(column=1, row=1,sticky=tk.NSEW)
 
-        frameRadio = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3).grid(column=1, row=2,sticky=tk.NSEW)
-        frameCheck = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3).grid(column=1, row=3,sticky=tk.NSEW)
-        frameSave = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3).grid(column=1, row=4,sticky=tk.NSEW)
-# #        b1Egzampe = tk.Button(frameAdress, text="JESTEM TESTEM").pack()
-#         var = tk.IntVar()
-#         radioChannel = tk.Radiobutton(frameRadio, text="All playlists form the channel", indicatoron=True, variable=var, value=1,).pack()
-#         radioList = tk.Radiobutton(frameRadio, text="Specific playlist", indicatoron=True, variable=var, value=2,).pack()
-#         #b2Egzampe = tk.Button(frameRadio, text="JESTEM TESTEM").pack()
-#         checkDesc = tk.Checkbutton(frameCheck,indicatoron=True, text="Video description").pack()
-#         checkLink = tk.Checkbutton(frameCheck,indicatoron=True, text="Link to the video").pack()
-#         checkAuth = tk.Checkbutton(frameCheck,indicatoron=True, text="Videos author").pack()
-#         checkDate = tk.Checkbutton(frameCheck,indicatoron=True, text="Upload date of the video").pack()
+        frameRadio = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
+        frameRadio.grid_columnconfigure(index=0,weight=1,uniform='columnR')
+        frameRadio.grid_columnconfigure(index=1,weight=1,uniform='columnR')
+        frameRadio.grid_rowconfigure(index=0,weight=1,uniform='rowR') 
         
-#         locationField = tk.Entry(frameSave).pack()
-#         confirmButton = tk.Button(frameSave, text="Save playlist").pack()
-        #b3Egzampe = tk.Button(frameCheck, text="JESTEM TESTEM").pack()
-        #b4Egzampe = tk.Button(frameSave, text="JESTEM TESTEM").pack()
+        tk.Radiobutton(frameRadio, 
+            text="All playlist form the channel", font=(WindowManager.__mainFont, 12),
+            variable=self.state, value=1).grid(column=0,row=0,sticky=tk.NSEW, padx=10, pady=5) 
+        tk.Radiobutton(frameRadio, 
+            text="One playlist", font=(WindowManager.__mainFont, 12),
+            variable=self.state, value=0).grid(column=1,row=0,sticky=tk.NSEW, padx=10, pady=5)
+        
+        frameRadio.grid(column=1, row=2,sticky=tk.NSEW)
+
+        frameCheck = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
+        frameCheck.grid_columnconfigure(index=0,weight=1,uniform='columnC')
+        frameCheck.grid_columnconfigure(index=1,weight=1,uniform='columnC')
+        frameCheck.grid_rowconfigure(index=0,weight=1,uniform='rowC') 
+        frameCheck.grid_rowconfigure(index=1,weight=1,uniform='rowC') 
+        frameCheck.grid_rowconfigure(index=2,weight=1,uniform='rowC') 
+        frameCheck.grid_rowconfigure(index=3,weight=1,uniform='rowC') 
+        options = ["Video name","Video address","Video author", "Playlist info","Video description","Upload date","Video thumbnail url",  "Playlist author"]
+        for i in range(0,len(options)):
+            chbtt = tk.Checkbutton(frameCheck, text=options[i])
+            if i <= 3:
+                chbtt.select()
+                chbtt.grid(column=0,row=i,sticky=tk.NSEW, padx=10, pady=5)
+            else:
+                chbtt.grid(column=1,row=i-4,sticky=tk.NSEW, padx=10, pady=5)
+
+        frameCheck.grid(column=1, row=3,sticky=tk.NSEW)
+        
+        frameSave = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
+        frameSave.grid_columnconfigure(index=0,weight=1,uniform='columnS')
+        frameSave.grid_rowconfigure(index=0,weight=1,uniform='rowS') 
+        frameSave.grid_rowconfigure(index=1,weight=2,uniform='rowS') 
+        tk.Entry(frameSave).grid(column=0,row=0,sticky=tk.NSEW, padx=10, pady=5)
+        tk.Button(frameSave, text="Get and Save").grid(column=0,row=1,sticky=tk.NSEW, padx=10, pady=5)
+        frameSave.grid(column=1, row=4,sticky=tk.NSEW)
+
         pass
 
     def createUpdateListView(self):
