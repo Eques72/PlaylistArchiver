@@ -139,7 +139,7 @@ class WindowManager:
 
     def getAndSave(self, addressEntered:str):
         caller = Caller.Caller()
-        choices = []
+        choices = []    
         for c in self.checkVarList:
             choices.append(c.get())
         if self.state.get() == 1: #all playlists
