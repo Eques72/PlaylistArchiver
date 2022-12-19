@@ -149,14 +149,14 @@ class WindowManager:
             response = caller.getPlaylistData(addressEntered, choices)       
             pass
 
-        filename = fd.asksaveasfilename(filetypes=[("Plik tekstowy","*.txt")], defaultextension = "*.txt") # wywołanie okna dialogowego save file
+        filename = fd.asksaveasfilename(filetypes=[("Plik tekstowy","*.txt")], defaultextension = "*.txt") #save file
         if self.state.get() == 1: #all playlists        
             for i in range(0,len(response)):
                 with open(filename + str(i), "w", -1, "utf-8") as file:
                     file.write(response[i](1.0, tk.END))
         if self.state.get() == 0: #all playlists        
             with open(filename, "w", -1, "utf-8") as file:
-                file.write(response(1.0, tk.END))  
+                file.write(response)  
 
     def createUpdateListView(self):
         pass
