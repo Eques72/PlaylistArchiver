@@ -6,7 +6,7 @@ class FormatFactory(ABC):
         pass
     
     def prepareDataToBeIncluded(self, includeParams: list,itemsData: dict, playlistInfo: dict) -> str:
-        data = self.prepareDataHeader(playlistInfo)
+        data = self.prepareDataHeader(playlistInfo, includeParams)
         data += self.prepareDataForTheFormat(itemsData , includeParams)
         return data
 
@@ -15,7 +15,7 @@ class FormatFactory(ABC):
         pass
 
     @abstractmethod
-    def prepareDataHeader(self,playlistInfo: dict) -> str:
+    def prepareDataHeader(self,playlistInfo: dict,includeParams: list) -> str:
         pass
 
     pass

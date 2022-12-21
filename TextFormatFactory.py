@@ -8,53 +8,65 @@ class TextFormatFactory(FormatFactory.FormatFactory):
     
     def prepareDataForTheFormat(self,itemsData: dict, includeParams: list) -> str:
         videosData:str = ""
-          # options = ["Video name","Video address","Video author", "Playlist info","Video description","Upload date","Video thumbnail url",  "Playlist author"]
         for info in itemsData["items"]:
-            if includeParams[0] == True: #name
-                try:
-                    videosData += (str)(info["snippet"]["position"]) + ". " + info["snippet"]["title"] + " "
-                except:
-                    videosData += "Video Unavailable "
-            if includeParams[2] == True: #author
+            #Title and Position, Mandatory
+            try:
+                videosData += (str)(info["snippet"]["position"]) + ". " + info["snippet"]["title"] + " "
+            except:
+                videosData += "Video Unavailable "
+            if includeParams[2] == True: #Author
                 try:
                     videosData += "- "+info["snippet"]["videoOwnerChannelTitle"] + ", "
                 except:
                     try:
-                        videosData += "- "+info["snippet"]["channelId"] + ", "
+                        videosData += "- "+info["snippet"]["videoOwnerChannelId"] + ", "
                     except:
                         videosData += " ,"
-            if includeParams[4] == True: #description
+            if includeParams[3] == True: #Video address
+                try:
+                    videosData += "https://www.youtube.com/watch?v=" + info["contentDetails"]["videoId"] + " , "                
+                except:
+                    videosData += "Video address unavailable, "                             
+            if includeParams[4] == True: #Author address
+                try:
+                    videosData += "Authors channel: "+"https://www.youtube.com/channel/"+info["snippet"]["videoOwnerChannelId"] + " , "              
+                except:
+                    videosData += "Author channel unavailable, "  
+            if includeParams[5] == True: #Description
                 description = ""
                 try:
                     description = info["snippet"]["description"]
                     description = ' '.join(description.splitlines())
                 except:
                     description = "Unavailable"
-                videosData += "Description: " + description + " "                
-            if includeParams[1] == True: #address
+                videosData += "Description: " + description + ". "                
+            if includeParams[6] == True: #Upload date
                 try:
-                    videosData += "https://www.youtube.com/watch?v=" + info["contentDetails"]["videoId"] + " "                
+                    videosData += "Upload date: "+info["contentDetails"]["videoPublishedAt"] + ", "              
+                except: 
+                    videosData += "Upload date: --.--.--, "          
+            if includeParams[7] == True: #Thumbnail url
+                try:
+                    videosData += "Thumbnail: " + info["snippet"]["thumbnails"]["maxres"]["url"] + " "              
                 except:
-                    videosData += "Video address unavailable "
-            if includeParams[3] == True: #playlist info
-                videosData += " "                
-            if includeParams[5] == True: #date
-                videosData += " "                
-            if includeParams[6] == True: #thumbnail
-                videosData += " "                
-            if includeParams[7] == True: #playlist owner   
-                videosData += " "
+                    try:
+                        videosData += "Thumbnail: " + info["snippet"]["thumbnails"]["default"]["url"] + " "               
+                    except:
+                        videosData += "Thumbnail unavailable "
             videosData += "\n"                
         return videosData
 
-    def prepareDataHeader(self,playlistInfo) -> str:
+    def prepareDataHeader(self,playlistInfo,includeParams: list) -> str:
         header:str = ""
         readableInfo:str = ""
+        paramsData:str = ""
+        for p in includeParams:
+            paramsData += "1" if p else "0"
         for info in playlistInfo["items"]:
-            header = "{\nplaylistId:"+info["id"]+"channelId:"+info["snippet"]["channelId"] + "\n" 
-            readableInfo = "Playlist Title: " + info["snippet"]["title"] + " Created at: " + info["snippet"]["publishedAt"]
+            header = "{\n\"playlistId\":\""+info["id"]+"\",\n\"channelId\":\""+info["snippet"]["channelId"]+"\",\n\"includedData\":\""+paramsData+"\"\n}\n"
+            readableInfo = "Playlist Title: " + info["snippet"]["title"] + ", Created at: " + info["snippet"]["publishedAt"]
             readableInfo +=  "\nDescription: "+info["snippet"]["description"] + "\nVisible videos: " 
-            readableInfo += (str)(info["contentDetails"]["itemCount"]) + "\nPlaylist owner: "+info["snippet"]["channelTitle"] + "\n}\n"
+            readableInfo += (str)(info["contentDetails"]["itemCount"]) + "\nPlaylist owner: "+info["snippet"]["channelTitle"] + "\n\n"
         return header+readableInfo
     
     pass

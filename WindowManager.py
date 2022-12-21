@@ -112,15 +112,15 @@ class WindowManager:
         frameCheck.grid_rowconfigure(index=1,weight=1,uniform='rowC') 
         frameCheck.grid_rowconfigure(index=2,weight=1,uniform='rowC') 
         frameCheck.grid_rowconfigure(index=3,weight=1,uniform='rowC') 
-        options = ["Video name","Video address","Video author", "Playlist info","Video description","Upload date","Video thumbnail url",  "Playlist author"]
-        
+        options = ["Video title","Video position","Video author","Video address","Author channel address", "Video description","Upload date","Video thumbnail url"]
         for i in range(0,len(options)):
             checkVar = tk.IntVar()
             self.checkVarList.append(checkVar)
             chbtt = tk.Checkbutton(frameCheck, text=options[i], variable=self.checkVarList[i], onvalue=True,offvalue=False)
             if i <= 3:
                 chbtt.select()
-                
+                if i <= 1:
+                    chbtt.config(state='disabled')
                 chbtt.grid(column=0,row=i,sticky=tk.NSEW, padx=10, pady=5)
             else:
                 chbtt.grid(column=1,row=i-4,sticky=tk.NSEW, padx=10, pady=5)
@@ -131,7 +131,7 @@ class WindowManager:
         frameSave.grid_columnconfigure(index=0,weight=1,uniform='columnS')
         frameSave.grid_rowconfigure(index=0,weight=1,uniform='rowS') 
         frameSave.grid_rowconfigure(index=1,weight=2,uniform='rowS') 
-#        tk.Entry(frameSave).grid(column=0,row=0,sticky=tk.NSEW, padx=10, pady=5)
+        #tk.Entry(frameSave).grid(column=0,row=0,sticky=tk.NSEW, padx=10, pady=5)
         tk.Button(frameSave, text="Get and Save",command=lambda: self.getAndSave(addressEntry.get())).grid(column=0,row=1,sticky=tk.NSEW, padx=10, pady=5)
         frameSave.grid(column=1, row=4,sticky=tk.NSEW)
 
