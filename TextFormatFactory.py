@@ -1,6 +1,12 @@
 import FormatFactory
+import json
+import re
 
 class TextFormatFactory(FormatFactory.FormatFactory):
+
+    __phrasesVideo:list = ["",""]
+    __phrasesHeader:list = ["",""]
+    #TODO
 
     def __init__(self) -> None:
         super().__init__()
@@ -69,4 +75,23 @@ class TextFormatFactory(FormatFactory.FormatFactory):
             readableInfo += (str)(info["contentDetails"]["itemCount"]) + "\nPlaylist owner: "+info["snippet"]["channelTitle"] + "\n\n"
         return header+readableInfo
     
+    def readHeader(self, data:str)-> dir:
+        infoDir:dir
+        match = re.match("{[^()]+}", data)
+        if match:
+            infoDir = json.loads(data[match.start():(match.end()+1)])
+        match = re.match(re.compile("Playlist Title: [^()]+,"), data)
+        infoDir["playlistTitle"] = data[match.start():(match.end())]
+        match = re.match(re.compile("Created at: [^\\n]+[\\n\\t\\r]{\\1}"), data)
+        infoDir["createdAt"] = data[match.start():(match.end())]
+        match = re.match(re.compile("Description: [^\\n]+[\\n\\t\\r]{\\1}"), data)
+        infoDir["description"] = data[match.start():(match.end())]
+        match = re.match(re.compile("Visible videos: [^\n]+[\n\t\r]{\\1}"), data)
+        infoDir["visibleVideos"] = data[match.start():(match.end())]                        
+        match = re.match(re.compile("Playlist owner: [^\\n]+[\\n\\t\\r]{\\1}"), data)
+        infoDir["playlistOwner"] = data[match.start():(match.end())] 
+        return infoDir
+    
+    def readFile(self):
+        return super().readFile()
     pass

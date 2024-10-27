@@ -1,7 +1,8 @@
-
+#redundant delete
 from abc import ABC, abstractmethod
 
 class FormatFactory(ABC):
+    
     def __init__(self) -> None:
         pass
     
@@ -16,6 +17,14 @@ class FormatFactory(ABC):
 
     @abstractmethod
     def prepareDataHeader(self,playlistInfo: dict,includeParams: list) -> str:
+        pass
+
+    @abstractmethod 
+    def readFile(self):
+        pass
+    
+    @abstractmethod 
+    def readHeader(self, data:str)-> dir:
         pass
 
     pass
