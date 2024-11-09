@@ -1,10 +1,10 @@
 
-import random
 import tkinter as tk
 import tkinter.font as tkF
 import tkinter.filedialog as fd
 from PlaylistManager import PlaylistManager
 from tkinter import ttk
+from datetime import datetime
 
 class WindowManager:
 
@@ -198,10 +198,11 @@ class WindowManager:
         self.mainFrame.grid_rowconfigure(index=7,weight=10,uniform='row') #Confirm
         self.mainFrame.grid_rowconfigure(index=8,weight=5,uniform='row') #Padding
 
+        playlist_manager = PlaylistManager()
         #Button, invokes method to open playlist file. After that status of the operation or playlist status is displayed in 
          #status frame automatically
         fileFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
-        tk.Button(fileFrame, text="Open saved playlist", command=self.openFile).pack(padx=10, pady=15)
+        tk.Button(fileFrame, text="Open saved playlist", command=lambda: self.openFile(playlist_manager)).pack(padx=10, pady=15)
         fileFrame.grid(column=1, row=1,sticky=tk.NSEW)
         
         statusFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
@@ -215,13 +216,26 @@ class WindowManager:
         # detailsFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
         # #playlist info from the header and details on included info 
         # detailsFrame.grid(column=1, row=3,sticky=tk.NSEW)
-
         optionsFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
+        optionsFrame.grid_columnconfigure(index=[0,1,2],weight=1,uniform='column') 
+        
         #Options for updating. Override or only add to the end, new file or not, force merge or abandon  
+        update_options = [tk.IntVar(),tk.IntVar(),tk.IntVar()]
+        cb1 = tk.Checkbutton(optionsFrame, text="Remove marked unavailable videos") 
+        cb1.config(variable=update_options[0], onvalue=True,offvalue=False)
+        cb1.grid(row=0, column=0, padx=5, pady=5, sticky=tk.E)
+        cb2 = tk.Checkbutton(optionsFrame, text="Add new videos")
+        cb2.config(variable=update_options[1], onvalue=True,offvalue=False)
+        cb2.grid(row=0, column=1, padx=5, pady=5)
+        cb2.select()
+        cb3 = tk.Checkbutton(optionsFrame, text="Override file")
+        cb3.config(variable=update_options[2], onvalue=True,offvalue=False)
+        cb3.grid(row=0, column=2, padx=5, pady=5,sticky=tk.W)
+
         optionsFrame.grid(column=1, row=6,sticky=tk.NSEW)
 
         confirmFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__colorThemeMain, border=3)
-        tk.Button(confirmFrame, text="Confirm and Update", command=self.doUpdate).pack(fill='both')
+        tk.Button(confirmFrame, text="Confirm and Update", command=lambda: self.doUpdate(update_options, playlist_manager)).pack(fill='both')
         confirmFrame.grid(column=1, row=7,sticky=tk.NSEW)                        
         
         # Open file
@@ -231,7 +245,7 @@ class WindowManager:
         # Confirm
         pass
     
-    def openFile(self):
+    def openFile(self, playlist_manager: PlaylistManager):
         filename = ""
         # print("Debug 1")
 
@@ -243,7 +257,6 @@ class WindowManager:
             defaultextension = "*.json"
             )
 
-        playlist_manager = PlaylistManager()
         playlist_manager.load_playlist_record(filename)
 
         n,m,mm = playlist_manager.compare_playlist_record_with_online()
@@ -323,9 +336,9 @@ class WindowManager:
         # self.statusLabel.configure(text=status)
         pass
 
-    def doUpdate(self):
-        #caller.manageExistingPlaylistUpdate(playlistInfo["playlistId"],data,1)
-            
+    def doUpdate(self, update_options: list, playlist_manager: PlaylistManager, filename:str):
+        playlist_manager.update_playlist_record(remove_missing=update_options[0], add_new=update_options[1])
+        playlist_manager.save_playlist_record(filename + "" if update_options[2] else f"_updated{str(datetime.now())}", remove_from_list=True)    
         pass
 
     def runWindowLoop(self):

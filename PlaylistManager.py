@@ -32,6 +32,7 @@ class PlaylistManager:
         self.caller = Caller()
         self.playlist_data = []
         self.state = ManagerState.FREE
+        self.playlist_analysis = {}
 
     def handle_state(self, desired_prev_states, desired_next_state:ManagerState) -> bool:
         if not isinstance(desired_prev_states, list):
@@ -98,10 +99,12 @@ class PlaylistManager:
                                                       self.playlist_data[playlist_index+1]["body"][i]["videoId"], 
                                                       self.playlist_data[playlist_index]["body"][i]["title"], 
                                                       self.playlist_data[playlist_index+1]["body"][i]["title"]])
+        self.playlist_analysis[self.get_playlist_name(playlist_index)] = (new_elements, missing_elements, mismatched_index_elements)
         return new_elements, missing_elements, mismatched_index_elements
 
-    def update_playlist_record(self, new_elements, missing_elements, 
+    def update_playlist_record(self, playlist_index:int=0,
                                remove_missing:bool=False, add_new:bool=True) -> None:
+        new_elements, missing_elements, _ = self.playlist_analysis[self.get_playlist_name(playlist_index)]
         if remove_missing:
             for element in self.playlist_data[0]["body"]:
                 if element in missing_elements:
@@ -125,9 +128,6 @@ class PlaylistManager:
         for i in range(0,len(self.playlist_data)):
             self.save_playlist_record(filename + "_" + str(i), i)
         self.playlist_data.clear()
-        pass
-
-    def update_playlist_record(self) -> None:
         pass
 
         #     if self.state.get() == 1: #all playlists        
