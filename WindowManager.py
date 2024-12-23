@@ -1,4 +1,5 @@
 
+import re
 import tkinter as tk
 import tkinter.font as tkF
 import tkinter.filedialog as fd
@@ -36,10 +37,10 @@ class WindowManager:
         self.file_loaded = False
 
         self.window.option_add("*Font", "Helvetica 12 bold")
-        self.window.option_add("*Button.Foreground", "white")
-        self.window.option_add("*Button.Background", WindowManager.__color_inactive)
-        self.window.option_add("*Button.ActiveBackground", WindowManager.__color_activate) #dont work fsr
-        self.window.option_add("*Button.Relief", "sunken")
+        self.window.option_add("*Foreground", "white")
+        self.window.option_add("*Background", WindowManager.__color_inactive)
+        self.window.option_add("*ActiveBackground", WindowManager.__color_activate) #dont work fsr
+        self.window.option_add("*Relief", "sunken")
 
     def run_window_loop(self):
         self.window.mainloop()
@@ -116,7 +117,7 @@ class WindowManager:
         self.item_count_label = tk.Label(self.mainFrame, text="Items in playlist: 0", anchor="w")
         self.item_count_label.grid(row=5, column=1, sticky="w", padx=10, pady=5)
 
-        tk.Button(self.mainFrame, text="Export to Spotify", command=lambda: self.request_export()).grid(column=1, row=2,sticky=tk.NSEW)
+        tk.Button(self.mainFrame, text="Export to Spotify", command=lambda: self.request_export(playlist_manager)).grid(column=1, row=2,sticky=tk.NSEW)
 
     def create_new_list_view(self):
         for widget in self.mainFrame.winfo_children():
@@ -164,23 +165,13 @@ class WindowManager:
         frameCheck.grid_rowconfigure(index=0,weight=1,uniform='rowC') 
         frameCheck.grid_rowconfigure(index=1,weight=1,uniform='rowC') 
         frameCheck.grid_rowconfigure(index=2,weight=1,uniform='rowC') 
-#        frameCheck.grid_rowconfigure(index=3,weight=1,uniform='rowC') 
 
-        # options = ["Video title","Video position","Video address","Author channel address","Video author","Video description","Upload date","Video thumbnail Url"]
         options = ["Author channel address","Video author","Video description","Upload date","Video thumbnail Url"]
         for i in range(0,len(options)):
             chbtt = tk.Checkbutton(frameCheck, text=options[i])
-            # if i <= 2:
-            #     chbtt.select()
-            #     chbtt.config(state='disabled')
-            #     self.checkbox_var_list.append(tk.IntVar(value=1))
-            # else:
             checkVar = tk.BooleanVar()
             self.checkbox_var_list.append(checkVar)
             chbtt.config(variable=self.checkbox_var_list[i], onvalue=True,offvalue=False)
-            # chbtt.config(variable=self.checkbox_var_list[i-3], onvalue=True,offvalue=False)
-                # chbtt = tk.Checkbutton(frameCheck, text=options[i], variable=self.checkbox_var_list[i-2], onvalue=True,offvalue=False)
-                # chbtt.grid(column=1,row=i-4,sticky=tk.NSEW, padx=10, pady=5)
             chbtt.grid(column=0 if i < len(options)/2 else 1,row=i%3,sticky=tk.NSEW, padx=10, pady=5)
 
         frameCheck.grid(column=1, row=3,sticky=tk.NSEW)
@@ -206,6 +197,7 @@ class WindowManager:
         for i, weight in enumerate(weights):
             self.mainFrame.grid_rowconfigure(index=i, weight=weight, uniform='row')
 
+        self.filepath = ""
         playlist_manager = PlaylistManager()
 
         self.create_back_button(self.mainFrame)
@@ -264,6 +256,9 @@ class WindowManager:
             self.create_starting_view()
 
     def record_playlist(self, addressEntered:str):
+        if addressEntered == "" or not re.match(r'^https://www\.youtube\.com/playlist', addressEntered):
+            self.create_pop_up("Invalid address", "Please enter a valid address")
+            return
         playlist_manager = PlaylistManager()
         choices = playlist_manager.default_video_params.copy()
 
@@ -356,6 +351,9 @@ class WindowManager:
         pass
 
     def do_update(self, update_options: list, playlist_manager: PlaylistManager, filepath:str):
+        if filepath == "":
+            self.create_pop_up("No file loaded", "Please load a file first")
+            return
         update_options_bools = []
         for i in range(0,len(update_options)):
             update_options_bools.append(update_options[i].get() == 1)
