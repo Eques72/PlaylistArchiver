@@ -2,6 +2,7 @@ from PlaylistResponseParser import PlaylistResponseParser
 from Caller import Caller
 import json
 from enum import Enum
+import re
 
 class ManagerState(Enum):
     CREATING_MULTIPLE = 1
@@ -46,29 +47,54 @@ class PlaylistManager:
     def create_multiple_new_playlist_records(self, channel_address, includes) -> None:
         if not self.handle_state(ManagerState.FREE, ManagerState.CREATING_MULTIPLE):
             return
-        playlist_items = self.caller.make_channel_request(channel_address)
-        for item in playlist_items:
-            res = self.caller.make_playlist_request_without_playlist_info(item)
-            h = self.playlist_response_parser.parse_response_header(item, self.default_playlist_params, includes)
-            b = self.playlist_response_parser.parse_response_body(res, includes)
-            self.playlist_data.append(self.playlist_response_parser.join_header_and_body(h,b))
+        try:
+            playlist_items = self.caller.make_channel_request(channel_address)
+            for item in playlist_items:
+                res = self.caller.make_playlist_request_without_playlist_info(item)
+                h = self.playlist_response_parser.parse_response_header(item, self.default_playlist_params, includes.copy())
+                b = self.playlist_response_parser.parse_response_body(res, includes)
+                self.playlist_data.append(self.playlist_response_parser.join_header_and_body(h,b))
+        except Exception as e:
+            print(f'Error: {e}')
+            raise
 
     def create_new_playlist_record(self, address, includes) -> None:
-        res = self.caller.get_playlist_response(address)
-        h = self.playlist_response_parser.parse_response_header(res[0], self.default_playlist_params, includes)
+        try:
+            res = self.caller.get_playlist_response(address)
+        except Exception as e:
+            print(f'Error: {e}')
+            raise
+        h = self.playlist_response_parser.parse_response_header(res[0], self.default_playlist_params, includes.copy())
         b = self.playlist_response_parser.parse_response_body(res[1], includes)
         self.playlist_data.append(self.playlist_response_parser.join_header_and_body(h,b))
         pass
 
     def get_playlist_name(self, playlist_index:int=0) -> str:
-        return str(self.playlist_data[playlist_index]["header"]["title"])
+        if playlist_index < 0 or playlist_index >= len(self.playlist_data):
+            return "None"
+        return str(self.playlist_data[playlist_index]["header"]["title"]) if self.playlist_data[playlist_index]["header"]["title"] else "No title"
+    
+    def get_playlist_basic_info(self, playlist_index:int=0) -> str:
+        if playlist_index < 0 or playlist_index >= len(self.playlist_data):
+            return {"title":"None", "channelId":"None", "description":"None", "itemCount":"None"}
+        return {"title":self.playlist_data[playlist_index]["header"]["title"],
+                "channelId": self.playlist_data[playlist_index]["header"]["channelId"],
+                "description": self.playlist_data[playlist_index]["header"]["description"],
+                "itemCount": self.playlist_data[playlist_index]["header"]["itemCount"]}
 
     def load_playlist_record(self, filepath:str) -> None:
         with open(filepath, "r", -1, "utf-8") as file:
             self.playlist_data.append(json.loads(file.read()))
         
     def compare_playlist_record_with_online(self, playlist_index:int=0, by_index:bool=True, by_ids:bool=True) -> None:
-        res = self.caller.make_playlist_request(self.playlist_data[playlist_index]["header"]["id"])
+        if playlist_index < 0 or playlist_index >= len(self.playlist_data):
+            print("Playlist index out of range or no playlist data")
+            return [],[],[]
+        try:
+            res = self.caller.make_playlist_request(self.playlist_data[playlist_index]["header"]["id"])
+        except Exception as e:
+            print(f'Error: {e}')
+            raise
         i_h, i_b = self.playlist_response_parser.deserialize_playlist_includes(self.playlist_data[playlist_index]["header"])
         h = self.playlist_response_parser.parse_response_header(res[0], self.default_playlist_params, i_h)
         b = self.playlist_response_parser.parse_response_body(res[1], i_b)
@@ -103,7 +129,11 @@ class PlaylistManager:
         return new_elements, missing_elements, mismatched_index_elements
 
     def update_playlist_record(self, playlist_index:int=0,
-                               remove_missing:bool=False, add_new:bool=True) -> None:
+                               remove_missing:bool=False, 
+                               add_new:bool=True) -> None:
+        if playlist_index < 0 or playlist_index >= len(self.playlist_data):
+            print("Playlist index out of range or no playlist data")
+            return
         new_elements, missing_elements, _ = self.playlist_analysis[self.get_playlist_name(playlist_index)]
         if remove_missing:
             for element in self.playlist_data[0]["body"]:
@@ -117,18 +147,42 @@ class PlaylistManager:
             element["index"] = self.playlist_data[0]["body"].index(element)
         self.playlist_data.pop(1)
 
-    def save_playlist_record(self, filename:str, playlist_index:int=0, remove_from_list:bool=False) -> None:
-        with open(filename, "w", -1, "utf-8") as file:
+    def save_playlist_record(self, filepath:str, playlist_index:int=0, remove_from_list:bool=False, safe_to_save:bool=True) -> None:
+        if not safe_to_save and playlist_index < 0 or playlist_index >= len(self.playlist_data):
+            print("Playlist index out of range or no playlist data")
+            return False
+        with open(filepath, "w", -1, "utf-8") as file:
             file.write(json.dumps(self.playlist_data[playlist_index], ensure_ascii=False, indent=4))
             if remove_from_list:
                 self.playlist_data.pop(playlist_index)
-        print("Playlist saved to file: " + filename)
+        print("Playlist saved to file: " + filepath)
+        return True
 
-    def save_multiple_playlist_records(self, filename:str) -> None:
+    def save_multiple_playlist_records(self, filepath:str, safe_to_save:bool=True) -> None:
+        if not safe_to_save:
+            return
         for i in range(0,len(self.playlist_data)):
-            self.save_playlist_record(filename + "_" + str(i), i)
+            self.save_playlist_record(filepath + "_" + str(i), i)
         self.playlist_data.clear()
-        pass
+
+    def export_to_spotify(self, playlist_index:int=0, safe_to_save:bool=True) -> int:
+        if not safe_to_save and playlist_index < 0 or playlist_index >= len(self.playlist_data):
+            print("Playlist index out of range or no playlist data")
+            return 0
+        print(self.playlist_data[playlist_index]["header"]["itemCount"])
+        all_titles = [self.playlist_data[playlist_index]["body"][i]["title"] for i in range(0,int(self.playlist_data[playlist_index]["header"]["itemCount"]))]
+        for i in range(0,len(all_titles)):
+            all_titles[i] = re.sub(r'[^a-zA-Z0-9]', ' ', all_titles[i])
+            all_titles[i] = re.sub(r'\s+', ' ', all_titles[i])
+            all_titles[i] = all_titles[i].strip()
+        try:
+            return self.caller.create_spotify_playlist(
+                self.playlist_data[playlist_index]["header"]["title"],
+                self.playlist_data[playlist_index]["header"]["description"],
+                all_titles)
+        except Exception as e:
+            print(f'Error: {e}')
+            raise
 
         #     if self.state.get() == 1: #all playlists        
         #     for i in range(0,len(response)):
