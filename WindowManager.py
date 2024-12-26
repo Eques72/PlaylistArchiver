@@ -42,6 +42,10 @@ class WindowManager:
         self.window.option_add("*ActiveBackground", WindowManager.__color_activate) #dont work fsr
         self.window.option_add("*Relief", "sunken")
 
+        self.window.option_add("*Entry.Foreground", WindowManager.__color_activate)
+        self.window.option_add("*Entry.Background", "white")
+        self.window.option_add("*Radiobutton.Background", WindowManager.__color_activate)
+        self.window.option_add("*Radiobutton.Foreground", "white")
     def run_window_loop(self):
         self.window.mainloop()
 
@@ -106,7 +110,7 @@ class WindowManager:
         self.create_back_button(self.mainFrame)
 
         fileFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
-        tk.Button(fileFrame, text="Open saved playlist", command=lambda: self.open_file(playlist_manager, fileFrame, True)).pack(padx=10, pady=15)
+        tk.Button(fileFrame, text="Open Playlist Archive", command=lambda: self.open_file(playlist_manager, fileFrame, True)).pack(padx=10, pady=15)
         fileFrame.grid(column=1, row=1,sticky=tk.NSEW)
 
         self.title_label = tk.Label(self.mainFrame, text="Playlist : _ , made by: _", anchor="w")
@@ -136,7 +140,7 @@ class WindowManager:
         frameAddress.grid_rowconfigure(index=0,weight=2,uniform='rowA') 
         frameAddress.grid_rowconfigure(index=1,weight=1,uniform='rowA') 
 
-        label = tk.Label(frameAddress,background=WindowManager.__color_main, foreground="#ffffff", text="Enter Youtube playlist Url:")
+        label = tk.Label(frameAddress, text="Enter Youtube playlist Url:") #background=WindowManager.__color_main, foreground="#ffffff",
         label.grid(column=0,row=0,columnspan=2, sticky=tk.NSEW, padx=10, pady=5)   
 
         addressEntry = tk.Entry(frameAddress)
@@ -194,7 +198,7 @@ class WindowManager:
         for i, weight in enumerate(weights):
             self.mainFrame.grid_columnconfigure(index=i, weight=weight, uniform='column')
 
-        weights = [5, 15, 10, 30, 30, 20, 20, 10, 5]
+        weights = [5, 15, 10, 80, 15, 10, 5]
         for i, weight in enumerate(weights):
             self.mainFrame.grid_rowconfigure(index=i, weight=weight, uniform='row')
 
@@ -204,38 +208,41 @@ class WindowManager:
         self.create_back_button(self.mainFrame)
 
         fileFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
-        tk.Button(fileFrame, text="Open saved playlist", command=lambda: self.open_file_and_update(playlist_manager)).pack(padx=10, pady=15)
+        tk.Button(fileFrame, text="Open Playlist Archive", command=lambda: self.open_file_and_update(playlist_manager)).pack(padx=10, pady=15)
         fileFrame.grid(column=1, row=1,sticky=tk.NSEW)
 
         statusFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
         statusFrame.grid_columnconfigure(index=0,weight=1,uniform='column') 
         statusFrame.grid_columnconfigure(index=1,weight=1,uniform='column') 
 
-        tk.Label(statusFrame, text="Loaded playlist: ").grid(column=0,row=0,sticky=tk.NSEW)
+        tk.Label(statusFrame, text="Loaded playlist archive: ").grid(column=0,row=0,sticky=tk.NSEW)
         self.statusLabel = tk.Label(statusFrame, text="None")
         self.statusLabel.grid(column=1,row=0,padx=5,sticky=tk.NSEW)
         statusFrame.grid(column=1, row=2,sticky=tk.NSEW)
 
         optionsFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
-        optionsFrame.grid_columnconfigure(index=[0,1,2],weight=1,uniform='column') 
+       # optionsFrame.grid_columnconfigure(index=[0,1,2],weight=1,uniform='column') 
 
         update_options = [tk.IntVar(),tk.IntVar(),tk.IntVar()]
-        cb1 = tk.Checkbutton(optionsFrame, text="Remove marked unavailable videos") 
+        cb1 = tk.Checkbutton(optionsFrame, text="Remove unavailable videos from archive") 
         cb1.config(variable=update_options[0], onvalue=True,offvalue=False)
-        cb1.grid(row=0, column=0, padx=5, pady=5, sticky=tk.E)
-        cb2 = tk.Checkbutton(optionsFrame, text="Add new videos")
+        # cb1.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        cb2 = tk.Checkbutton(optionsFrame, text="Add new videos to archive")
         cb2.config(variable=update_options[1], onvalue=True,offvalue=False)
-        cb2.grid(row=0, column=1, padx=5, pady=5)
+        # cb2.grid(row=0, column=1, padx=5, pady=5)
         cb2.select()
-        cb3 = tk.Checkbutton(optionsFrame, text="Override file")
+        cb3 = tk.Checkbutton(optionsFrame, text="Override archive file")
         cb3.config(variable=update_options[2], onvalue=True,offvalue=False)
-        cb3.grid(row=0, column=2, padx=5, pady=5,sticky=tk.W)
+        # cb3.grid(row=0, column=2, padx=5, pady=5,sticky=tk.E)
+        cb1.pack( padx=5, pady=5, anchor=tk.W, side=tk.TOP)
+        cb2.pack(padx=5, pady=5, anchor="center", side=tk.TOP)
+        cb3.pack(padx=5, pady=5, anchor=tk.E, side=tk.TOP)
 
-        optionsFrame.grid(column=1, row=6,sticky=tk.NSEW)
+        optionsFrame.grid(column=1, row=4,sticky=tk.NSEW)
 
         confirmFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
         tk.Button(confirmFrame, text="Confirm and Update", command=lambda: self.do_update(update_options, playlist_manager, self.filepath)).pack(fill='both')
-        confirmFrame.grid(column=1, row=7,sticky=tk.NSEW)         
+        confirmFrame.grid(column=1, row=5,sticky=tk.NSEW)         
 
     # ===================================== Actions =====================================
     def update_label(self, label: tk.Label):
@@ -307,6 +314,7 @@ class WindowManager:
             defaultextension = "*.json"
             )
         try:
+            playlist_manager.reset()
             playlist_manager.load_playlist_record(filename)
             pl_info = playlist_manager.get_playlist_basic_info()
             tk.Label(frame, text=str(pl_info)).pack(padx=10, pady=15)
@@ -322,9 +330,6 @@ class WindowManager:
 
     def open_file_and_update(self, playlist_manager: PlaylistManager):
         self.filepath = ""
-        # print("Debug 1")
-
-        # print("Debug 2")
         self.filepath = fd.askopenfilename(
             initialdir="C:", 
             title="Open Playlist", 
@@ -333,6 +338,7 @@ class WindowManager:
             )
         try:
             self.disable_interactions()
+            playlist_manager.reset()
             playlist_manager.load_playlist_record(self.filepath)
             n,m,mm = playlist_manager.compare_playlist_record_with_online()
             self.statusLabel.configure(text=playlist_manager.get_playlist_name())
@@ -342,20 +348,6 @@ class WindowManager:
             print(f'Error: {e}')
             self.create_pop_up("IO Error", "Error when loading a file, returning to main menu", True)
             self.create_starting_view()
-
-        # if filename.endswith(".txt"):
-        #     playlistInfo = caller.readExistingPlaylist(type=1, fileData=data)
-        #     if playlistInfo[0] == True:
-        #         status = "Correct"
-        #     else:
-        #         status = "Playlist file corrupted"
-        #     #display info
-            
-        #caller to format
-        #callers decides of the status, rest gives formatfactory
-        #print(data)        
-        # self.statusLabel.configure(text=status)
-        pass
 
     def do_update(self, update_options: list, playlist_manager: PlaylistManager, filepath:str):
         if filepath == "":
@@ -386,15 +378,22 @@ class WindowManager:
         button.grid(column=1, row=0, sticky=tk.NW)             
 
     def create_treeview_summary(self, n, m, mm):
-        tree_new_videos = ttk.Treeview(self.mainFrame, columns=("Column1", "Column2", "Column3"), show='headings')
+        treeviewsFrame = tk.LabelFrame(self.mainFrame, border=1)
+        treeviewsFrame.grid_columnconfigure(index=0, weight=1, uniform='column')
+        weights = [8,30,8,30,8,25]
+        for i, weight in enumerate(weights):
+            treeviewsFrame.grid_rowconfigure(index=i, weight=weight, uniform='row')
+        treeviewsFrame.grid(column=1, row=3,sticky=tk.NSEW)
+
+        tree_new_videos = ttk.Treeview(treeviewsFrame, columns=("Column1", "Column2", "Column3"), show='headings')
 
         tree_scrollbar1 = tk.Scrollbar(tree_new_videos)
         tree_scrollbar1.pack(side=tk.RIGHT, fill=tk.Y)
         tree_scrollbar1.config(command=tree_new_videos.yview)
 
         tree_new_videos.heading("Column1", text="Index")
-        tree_new_videos.heading("Column2", text="Title")
-        tree_new_videos.heading("Column3", text="Id")
+        tree_new_videos.heading("Column2", text="Video Title")
+        tree_new_videos.heading("Column3", text="Video ID")
         tree_new_videos.column("Column1", stretch=False, width=50)
         tree_new_videos.column("Column2", width=200)
         tree_new_videos.column("Column3", stretch=False, width=200)
@@ -402,16 +401,17 @@ class WindowManager:
         for element in n:
             tree_new_videos.insert("", "end", values=(element["position"], element["title"], element["videoId"]))
 
-        tree_new_videos.grid(column=1, row=3,sticky=tk.NSEW)
+        tk.Label(treeviewsFrame, text="New videos in remote playlist:").grid(column=0, row=0,sticky=tk.NSEW)
+        tree_new_videos.grid(column=0, row=1,sticky=tk.NSEW)
 
-        tree_missing_videos = ttk.Treeview(self.mainFrame, columns=("Column1", "Column2", "Column3"), show='headings')
+        tree_missing_videos = ttk.Treeview(treeviewsFrame, columns=("Column1", "Column2", "Column3"), show='headings')
         tree_scrollbar2 = tk.Scrollbar(tree_missing_videos)
         tree_scrollbar2.pack(side=tk.RIGHT, fill=tk.Y)
         tree_scrollbar2.config(command=tree_missing_videos.yview)
 
         tree_missing_videos.heading("Column1", text="Index")
-        tree_missing_videos.heading("Column2", text="Title")
-        tree_missing_videos.heading("Column3", text="Id")
+        tree_missing_videos.heading("Column2", text="Video Title")
+        tree_missing_videos.heading("Column3", text="Video ID")
         tree_missing_videos.column("Column1", stretch=False, width=50)
         tree_missing_videos.column("Column2", width=200)
         tree_missing_videos.column("Column3", stretch=False, width=200)
@@ -419,18 +419,19 @@ class WindowManager:
         for element in m:
             tree_missing_videos.insert("", "end", values=(element["position"], element["title"], element["videoId"]))
 
-        tree_missing_videos.grid(column=1, row=4,sticky=tk.NSEW)   
+        tk.Label(treeviewsFrame, text="Videos missing in remote playlist:").grid(column=0, row=2,sticky=tk.NSEW)
+        tree_missing_videos.grid(column=0, row=3,sticky=tk.NSEW)   
 
-        tree_mismath = ttk.Treeview(self.mainFrame, columns=("Column1", "Column2", "Column3", "Column4", "Column5"), show='headings')
+        tree_mismath = ttk.Treeview(treeviewsFrame, columns=("Column1", "Column2", "Column3", "Column4", "Column5"), show='headings')
         tree_scrollbar3 = tk.Scrollbar(tree_mismath)
         tree_scrollbar3.pack(side=tk.RIGHT, fill=tk.Y)
         tree_scrollbar3.config(command=tree_mismath.yview)
 
         tree_mismath.heading("Column1", text="Index")
-        tree_mismath.heading("Column2", text="Id1")
-        tree_mismath.heading("Column3", text="Id2")
-        tree_mismath.heading("Column4", text="Title1")
-        tree_mismath.heading("Column5", text="Title2")
+        tree_mismath.heading("Column2", text="Archived Video ID")
+        tree_mismath.heading("Column3", text="Remote Video ID")
+        tree_mismath.heading("Column4", text="Archived Video Title")
+        tree_mismath.heading("Column5", text="Remote Video Title")
 
         tree_mismath.column("Column1", stretch=False, width=50)
         tree_mismath.column("Column2", stretch=False, width=150)
@@ -441,7 +442,8 @@ class WindowManager:
         for element in mm:
             tree_mismath.insert("", "end", values=(element[0], element[1],element[2],element[3], element[4]))
 
-        tree_mismath.grid(column=1, row=5,sticky=tk.NSEW)
+        tk.Label(treeviewsFrame, text="Mismatched positions:").grid(column=0, row=4,sticky=tk.NSEW)
+        tree_mismath.grid(column=0, row=5,sticky=tk.NSEW)
 
     def disable_interactions(self):
         self.window.configure(cursor="watch")

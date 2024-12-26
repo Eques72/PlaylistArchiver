@@ -184,6 +184,11 @@ class PlaylistManager:
             print(f'Error: {e}')
             raise
 
+    def reset(self):
+        self.playlist_data.clear()
+        self.state = ManagerState.FREE
+        self.playlist_analysis = {}
+
         #     if self.state.get() == 1: #all playlists        
         #     for i in range(0,len(response)):
         #         with open(filename + str(i), "w", -1, "utf-8") as file:
