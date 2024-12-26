@@ -54,6 +54,7 @@ class WindowManager:
         self.mainFrame = tk.LabelFrame(self.window, bg=WindowManager.__color_main)
         self.mainFrame.pack(fill="both",expand=True)
 
+        self.window.configure(cursor="arrow")
         self.file_loaded = False
         self.checkbox_var_list = []
         self.state = tk.IntVar()
@@ -247,8 +248,10 @@ class WindowManager:
         pass
 
     def request_export(self, playlist_manager: PlaylistManager):
+        self.disable_interactions()
         try:
             added_elements = playlist_manager.export_to_spotify(safe_to_save=self.file_loaded)
+            self.enable_interactions()
             self.create_pop_up("Export successful", f"Playlist exported successfully with {added_elements} elements.")
         except Exception as e:
             print(f'Error: {e}')
@@ -261,7 +264,8 @@ class WindowManager:
             return
         playlist_manager = PlaylistManager()
         choices = playlist_manager.default_video_params.copy()
-
+        
+        self.disable_interactions()
         for i in range(0,len(self.checkbox_var_list)):
             choices[list(choices.keys())[i]] = self.checkbox_var_list[i].get()
         try:
@@ -282,6 +286,7 @@ class WindowManager:
             if self.state.get() == 0:
                 success = playlist_manager.save_playlist_record(file_path, remove_from_list=True)
             if success:
+                self.enable_interactions()
                 self.create_pop_up("Successfully created a playlist archive", f"File created in: {file_path}")
             else:
                 self.create_pop_up("Save failed", "Archive creation failed, returning to main menu", return_not_confirm=True)
@@ -327,10 +332,12 @@ class WindowManager:
             defaultextension = "*.json"
             )
         try:
+            self.disable_interactions()
             playlist_manager.load_playlist_record(self.filepath)
             n,m,mm = playlist_manager.compare_playlist_record_with_online()
             self.statusLabel.configure(text=playlist_manager.get_playlist_name())
             self.create_treeview_summary(n, m, mm)
+            self.enable_interactions()
         except Exception as e:
             print(f'Error: {e}')
             self.create_pop_up("IO Error", "Error when loading a file, returning to main menu", True)
@@ -355,12 +362,14 @@ class WindowManager:
             self.create_pop_up("No file loaded", "Please load a file first")
             return
         update_options_bools = []
+        self.disable_interactions()
         for i in range(0,len(update_options)):
             update_options_bools.append(update_options[i].get() == 1)
         datetime_str = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         filepath = os.path.splitext(filepath)[0] + ("" if update_options_bools[2] else f"_updated_{datetime_str}") + ".json"
         playlist_manager.update_playlist_record(remove_missing=update_options_bools[0], add_new=update_options_bools[1])
         if playlist_manager.save_playlist_record(filepath, remove_from_list=True):
+            self.enable_interactions()
             self.create_pop_up("Update successful", f"Playlist updated successfully and saved to: {filepath}")
         else:
             self.create_pop_up("Update failed", "Playlist update failed, returning to main menu", return_not_confirm=True)
@@ -393,7 +402,7 @@ class WindowManager:
         for element in n:
             tree_new_videos.insert("", "end", values=(element["position"], element["title"], element["videoId"]))
 
-        tree_new_videos.grid(column=1, row=3,sticky=tk.NSEW)    
+        tree_new_videos.grid(column=1, row=3,sticky=tk.NSEW)
 
         tree_missing_videos = ttk.Treeview(self.mainFrame, columns=("Column1", "Column2", "Column3"), show='headings')
         tree_scrollbar2 = tk.Scrollbar(tree_missing_videos)
@@ -434,6 +443,19 @@ class WindowManager:
 
         tree_mismath.grid(column=1, row=5,sticky=tk.NSEW)
 
+    def disable_interactions(self):
+        self.window.configure(cursor="watch")
+        for widget in self.window.winfo_children():
+            if isinstance(widget, tk.Button) or isinstance(widget, tk.Checkbutton) or isinstance(widget, tk.Radiobutton) or isinstance(widget, tk.Entry):
+                widget.config(state="disabled")
+        self.window.update()
+
+    def enable_interactions(self):
+        self.window.configure(cursor="arrow")
+        for widget in self.window.winfo_children():
+            if isinstance(widget, tk.Button) or isinstance(widget, tk.Checkbutton) or isinstance(widget, tk.Radiobutton) or isinstance(widget, tk.Entry):
+                widget.config(state="normal")
+        self.window.update()
 
 if __name__ == "__main__":
     wM = WindowManager(False)
