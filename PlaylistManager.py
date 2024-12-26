@@ -3,6 +3,7 @@ from Caller import Caller
 import json
 from enum import Enum
 import re
+import os
 
 class ManagerState(Enum):
     CREATING_MULTIPLE = 1
@@ -43,6 +44,7 @@ class PlaylistManager:
             return False
         else:
             self.state = desired_next_state
+        return True
     
     def create_multiple_new_playlist_records(self, channel_address, includes) -> None:
         if not self.handle_state(ManagerState.FREE, ManagerState.CREATING_MULTIPLE):
@@ -50,10 +52,10 @@ class PlaylistManager:
         try:
             playlist_items = self.caller.make_channel_request(channel_address)
             for item in playlist_items:
-                res = self.caller.make_playlist_request_without_playlist_info(item)
-                h = self.playlist_response_parser.parse_response_header(item, self.default_playlist_params, includes.copy())
-                b = self.playlist_response_parser.parse_response_body(res, includes)
-                self.playlist_data.append(self.playlist_response_parser.join_header_and_body(h,b))
+                res = self.caller.make_playlist_request(item["id"])
+                h = self.playlist_response_parser.parse_response_header(res[0], self.default_playlist_params, includes.copy())
+                b = self.playlist_response_parser.parse_response_body(res[1], includes.copy())
+                self.playlist_data.append(self.playlist_response_parser.join_header_and_body(h, b))
         except Exception as e:
             print(f'Error: {e}')
             raise
@@ -158,12 +160,18 @@ class PlaylistManager:
         print("Playlist saved to file: " + filepath)
         return True
 
-    def save_multiple_playlist_records(self, filepath:str, safe_to_save:bool=True) -> None:
+    def save_multiple_playlist_records(self, filepath:str, safe_to_save:bool=True, get_unique_names=True) -> None:
         if not safe_to_save:
-            return
+            return False
         for i in range(0,len(self.playlist_data)):
-            self.save_playlist_record(filepath + "_" + str(i), i)
+            single_filepath = ""
+            if get_unique_names:
+                single_filepath = os.path.join(filepath, self.playlist_data[i]["header"]["title"] + ".json")
+            else:
+                single_filepath = os.path.splitext(filepath)[0] + "_" + str(i) + ".json"
+            self.save_playlist_record(single_filepath, i)
         self.playlist_data.clear()
+        return True
 
     def export_to_spotify(self, playlist_index:int=0, safe_to_save:bool=True) -> int:
         if not safe_to_save and playlist_index < 0 or playlist_index >= len(self.playlist_data):

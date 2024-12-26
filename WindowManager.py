@@ -140,7 +140,7 @@ class WindowManager:
         frameAddress.grid_rowconfigure(index=0,weight=2,uniform='rowA') 
         frameAddress.grid_rowconfigure(index=1,weight=1,uniform='rowA') 
 
-        label = tk.Label(frameAddress, text="Enter Youtube playlist Url:") #background=WindowManager.__color_main, foreground="#ffffff",
+        label = tk.Label(frameAddress, text="Enter Youtube playlist URL:")
         label.grid(column=0,row=0,columnspan=2, sticky=tk.NSEW, padx=10, pady=5)   
 
         addressEntry = tk.Entry(frameAddress)
@@ -186,7 +186,10 @@ class WindowManager:
         frameSave.grid_rowconfigure(index=0,weight=1,uniform='rowS') 
         frameSave.grid_rowconfigure(index=1,weight=2,uniform='rowS') 
 
-        tk.Button(frameSave, text="Record Playlist",command=lambda: self.record_playlist(addressEntry.get())).grid(column=0,row=1,sticky=tk.NSEW, padx=10, pady=5)
+        confirm_button = tk.Button(frameSave, text="Archive Playlist",command=lambda: self.record_playlist(addressEntry.get()))
+        confirm_button.grid(column=0,row=1,sticky=tk.NSEW, padx=10, pady=5)
+
+        self.state.trace_add("write", lambda *args: self.update_button_text(confirm_button))
 
         frameSave.grid(column=1, row=4,sticky=tk.NSEW)
 
@@ -248,11 +251,18 @@ class WindowManager:
     def update_label(self, label: tk.Label):
         text = ""
         if(self.state.get() == 0):
-            text = "Enter Youtube playlist Url:"
+            text = "Enter Youtube Playlist URL:"
         else:
-            text = "Enter Youtube channel Url:"
+            text = "Enter Youtube Channel URL:"
         label.configure(text=text)
-        pass
+
+    def update_button_text(self, button: tk.Button):
+        text = ""
+        if(self.state.get() == 0):
+            text = "Archive Playlist"
+        else:
+            text = "Archive Playlists"
+        button.configure(text=text)
 
     def request_export(self, playlist_manager: PlaylistManager):
         self.disable_interactions()
@@ -266,7 +276,7 @@ class WindowManager:
             self.create_starting_view()
 
     def record_playlist(self, addressEntered:str):
-        if addressEntered == "" or not re.match(r'^https://www\.youtube\.com/playlist', addressEntered):
+        if addressEntered == "" or (not re.match(r'^https://www\.youtube\.com/playlist', addressEntered) and not re.match(r'^[a-zA-Z0-9_-]+$', addressEntered)):
             self.create_pop_up("Invalid address", "Please enter a valid address")
             return
         playlist_manager = PlaylistManager()
@@ -285,11 +295,14 @@ class WindowManager:
 
             file_path = fd.asksaveasfilename(filetypes=[("Plik JSON","*.json")], defaultextension = "*.json", 
                                             initialdir = "C:/", title = "Choose save location and file name", 
-                                            initialfile = playlist_manager.get_playlist_name())
+                                            initialfile = "Leave empty for unique name for each playlist")
 
             success = False
             if self.state.get() == 1:
-                success = playlist_manager.save_multiple_playlist_records(file_path)
+                    # os.path.
+                    # filepath = os.path.splitext(filepath)[0] + ("" if update_options_bools[2] else f"_updated_{datetime_str}") + ".json"
+                success = playlist_manager.save_multiple_playlist_records(os.path.split(file_path)[0], True, True)
+                # success = playlist_manager.save_multiple_playlist_records(file_path)
             if self.state.get() == 0:
                 success = playlist_manager.save_playlist_record(file_path, remove_from_list=True)
             if success:
