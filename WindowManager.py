@@ -224,22 +224,20 @@ class WindowManager:
         statusFrame.grid(column=1, row=2,sticky=tk.NSEW)
 
         optionsFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
-       # optionsFrame.grid_columnconfigure(index=[0,1,2],weight=1,uniform='column') 
+        optionsFrame.grid_columnconfigure(index=[0,1,2],weight=1,uniform='column', pad=5) 
 
         update_options = [tk.IntVar(),tk.IntVar(),tk.IntVar()]
         cb1 = tk.Checkbutton(optionsFrame, text="Remove unavailable videos from archive") 
-        cb1.config(variable=update_options[0], onvalue=True,offvalue=False)
-        # cb1.grid(row=0, column=0, padx=5, pady=5, sticky=tk.W)
+        cb1.config(variable=update_options[0], onvalue=True,offvalue=False, pady=5)
         cb2 = tk.Checkbutton(optionsFrame, text="Add new videos to archive")
-        cb2.config(variable=update_options[1], onvalue=True,offvalue=False)
-        # cb2.grid(row=0, column=1, padx=5, pady=5)
+        cb2.config(variable=update_options[1], onvalue=True,offvalue=False, pady=5)
         cb2.select()
         cb3 = tk.Checkbutton(optionsFrame, text="Override archive file")
-        cb3.config(variable=update_options[2], onvalue=True,offvalue=False)
-        # cb3.grid(row=0, column=2, padx=5, pady=5,sticky=tk.E)
-        cb1.pack( padx=5, pady=5, anchor=tk.W, side=tk.TOP)
-        cb2.pack(padx=5, pady=5, anchor="center", side=tk.TOP)
-        cb3.pack(padx=5, pady=5, anchor=tk.E, side=tk.TOP)
+        cb3.config(variable=update_options[2], onvalue=True,offvalue=False, pady=5)
+
+        cb1.grid(row=0, column=0, sticky="ew")
+        cb2.grid(row=0, column=1, sticky="ew")
+        cb3.grid(row=0, column=2, sticky="ew")
 
         optionsFrame.grid(column=1, row=4,sticky=tk.NSEW)
 
