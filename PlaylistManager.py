@@ -9,7 +9,6 @@ class ManagerState(Enum):
     CREATING_MULTIPLE = 1
     CREATING_SINGLE = 2
     FREE = 3
-    UPDATING_SINGLE = 4
 
 class PlaylistManager:
     default_playlist_params= {
@@ -28,7 +27,7 @@ class PlaylistManager:
         "videoPublishedAt": True,
         "thumbnail": True
     }
-    # manager_states
+
     def __init__(self):
         self.playlist_response_parser = PlaylistResponseParser()
         self.caller = Caller()
@@ -36,7 +35,7 @@ class PlaylistManager:
         self.state = ManagerState.FREE
         self.playlist_analysis = {}
 
-    def handle_state(self, desired_prev_states, desired_next_state:ManagerState) -> bool:
+    def __handle_state(self, desired_prev_states, desired_next_state:ManagerState) -> bool:
         if not isinstance(desired_prev_states, list):
             desired_prev_states = [desired_prev_states]
         if self.state not in desired_prev_states:
@@ -47,7 +46,7 @@ class PlaylistManager:
         return True
     
     def create_multiple_new_playlist_records(self, channel_address, includes) -> None:
-        if not self.handle_state(ManagerState.FREE, ManagerState.CREATING_MULTIPLE):
+        if not self.__handle_state(ManagerState.FREE, ManagerState.CREATING_MULTIPLE):
             return
         try:
             playlist_items = self.caller.make_channel_request(channel_address)
@@ -196,11 +195,3 @@ class PlaylistManager:
         self.playlist_data.clear()
         self.state = ManagerState.FREE
         self.playlist_analysis = {}
-
-        #     if self.state.get() == 1: #all playlists        
-        #     for i in range(0,len(response)):
-        #         with open(filename + str(i), "w", -1, "utf-8") as file:
-        #             file.write(response[i](1.0, tk.END))
-        # if self.state.get() == 0: #all playlists        
-        #     with open(filename, "w", -1, "utf-8") as file:
-        #         file.write(response)  

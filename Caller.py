@@ -3,7 +3,7 @@ import os
 import googleapiclient.discovery
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-5
+
 default_playlist_params= {
     "itemCount": True,
     "channelTitle": True,
@@ -44,7 +44,7 @@ class Caller:
                 playlistId=playlistID,
                 maxResults="50"
                 ).execute()
-            nextToken = self.get_next_token(res)
+            nextToken = self.__get_next_token(res)
             answer = answer | res
             while nextToken != None:
                 res = self.youtube.playlistItems().list(
@@ -53,12 +53,20 @@ class Caller:
                 playlistId=playlistID,
                 maxResults="50"
                 ).execute()
-                nextToken = self.get_next_token(res)
+                nextToken = self.__get_next_token(res)
                 answer["items"] = answer["items"] + res["items"]
             return answer
         except Exception as e:
             print(f'Error: {e}')
             raise
+
+    def __get_next_token(self, response) -> str:
+        token = ""
+        try:
+            token = response["nextPageToken"]
+        except:
+            token = None
+        return token
 
     def get_playlist_response(self, address:str) -> tuple:
         playlist_id = self.__scrap_playlist_id(address)
@@ -82,18 +90,6 @@ class Caller:
         except Exception as e:
             print(f'Error: {e}')
             raise
-
-    def make_playlist_request_without_playlist_info(self, playlistInfo: dict) -> dict:
-        all_items = self.__get_all_playlist_positions(playlistInfo["id"])
-        return all_items
-
-    def get_next_token(self, response) -> str:
-        token = ""
-        try:
-            token = response["nextPageToken"]
-        except:
-            token = None
-        return token
 
     def create_spotify_playlist(self, playlist_name:str, playlist_description:str, songs: list):
         CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')

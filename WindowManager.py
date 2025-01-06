@@ -16,7 +16,7 @@ class WindowManager:
     __color_main = "#2c2c2c"#"#272822"
     __color_activate = "#262726"#"#666960"#"#7a7b75"
     __color_inactive = "#f40532"#"#404239"#"#3d3e38"
-    __main_font = "Impact"
+    __main_font = "Helvetica 12 bold"
 
     def __init__(self, startFullscreen: bool):
         self.window = tk.Tk()
@@ -46,6 +46,7 @@ class WindowManager:
         self.window.option_add("*Entry.Background", "white")
         self.window.option_add("*Radiobutton.Background", WindowManager.__color_activate)
         self.window.option_add("*Radiobutton.Foreground", "white")
+
     def run_window_loop(self):
         self.window.mainloop()
 
@@ -469,8 +470,3 @@ class WindowManager:
             if isinstance(widget, tk.Button) or isinstance(widget, tk.Checkbutton) or isinstance(widget, tk.Radiobutton) or isinstance(widget, tk.Entry):
                 widget.config(state="normal")
         self.window.update()
-
-if __name__ == "__main__":
-    wM = WindowManager(False)
-    wM.create_starting_view()
-    wM.run_window_loop()
