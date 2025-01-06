@@ -110,19 +110,19 @@ class WindowManager:
         self.create_back_button(self.mainFrame)
 
         fileFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
-        tk.Button(fileFrame, text="Open Playlist Archive", command=lambda: self.open_file(playlist_manager, fileFrame, True)).pack(padx=10, pady=15)
+        tk.Button(fileFrame, text="Open Playlist Archive", command=lambda: self.open_file(playlist_manager, fileFrame, True)).pack(padx=10, pady=10, fill='both')
         fileFrame.grid(column=1, row=1,sticky=tk.NSEW)
 
-        self.title_label = tk.Label(self.mainFrame, text="Playlist : _ , made by: _", anchor="w")
+        self.title_label = tk.Label(self.mainFrame, text="Playlist : _ , made by: _", anchor="w", background=WindowManager.__color_main)
         self.title_label.grid(row=3, column=1, sticky="w", padx=10, pady=5)
 
-        self.description_label = tk.Label(self.mainFrame, text="Playlist description: _", anchor="w")
+        self.description_label = tk.Label(self.mainFrame, text="Playlist description: _", anchor="w", background=WindowManager.__color_main)
         self.description_label.grid(row=4, column=1, sticky="w", padx=10, pady=5)
 
-        self.item_count_label = tk.Label(self.mainFrame, text="Items in playlist: 0", anchor="w")
+        self.item_count_label = tk.Label(self.mainFrame, text="Items in playlist: 0", anchor="w", background=WindowManager.__color_main)
         self.item_count_label.grid(row=5, column=1, sticky="w", padx=10, pady=5)
 
-        tk.Button(self.mainFrame, text="Export to Spotify", command=lambda: self.request_export(playlist_manager)).grid(column=1, row=2,sticky=tk.NSEW)
+        tk.Button(self.mainFrame, text="Export to Spotify", command=lambda: self.request_export(playlist_manager)).grid(column=1, row=2,sticky=tk.NSEW, padx=10, pady=10)
 
     def create_new_list_view(self):
         for widget in self.mainFrame.winfo_children():
@@ -140,8 +140,8 @@ class WindowManager:
         frameAddress.grid_rowconfigure(index=0,weight=2,uniform='rowA') 
         frameAddress.grid_rowconfigure(index=1,weight=1,uniform='rowA') 
 
-        label = tk.Label(frameAddress, text="Enter Youtube playlist URL:")
-        label.grid(column=0,row=0,columnspan=2, sticky=tk.NSEW, padx=10, pady=5)   
+        label = tk.Label(frameAddress, text="Enter Youtube playlist URL:", background="darkred")
+        label.grid(column=0,row=0,columnspan=2, sticky=tk.NSEW, padx=10, pady=15)   
 
         addressEntry = tk.Entry(frameAddress)
         addressEntry.grid(column=0,row=1,columnspan=2,sticky=tk.NSEW, padx=10, pady=5)
@@ -154,10 +154,10 @@ class WindowManager:
         frameRadio.grid_rowconfigure(index=0,weight=1,uniform='rowR') 
 
         tk.Radiobutton(frameRadio, 
-            text="Every playlist from a channel", font=(WindowManager.__main_font, 12),
+            text="Every playlist from a channel",
             variable=self.state, value=1).grid(column=0,row=0,sticky=tk.NSEW, padx=10, pady=5) 
         tk.Radiobutton(frameRadio, 
-            text="Single playlist", font=(WindowManager.__main_font, 12),
+            text="Single playlist",
             variable=self.state, value=0).grid(column=1,row=0,sticky=tk.NSEW, padx=10, pady=5)
 
         frameRadio.grid(column=1, row=2,sticky=tk.NSEW)
@@ -184,10 +184,9 @@ class WindowManager:
         frameSave = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
         frameSave.grid_columnconfigure(index=0,weight=1,uniform='columnS')
         frameSave.grid_rowconfigure(index=0,weight=1,uniform='rowS') 
-        frameSave.grid_rowconfigure(index=1,weight=2,uniform='rowS') 
 
         confirm_button = tk.Button(frameSave, text="Archive Playlist",command=lambda: self.record_playlist(addressEntry.get()))
-        confirm_button.grid(column=0,row=1,sticky=tk.NSEW, padx=10, pady=5)
+        confirm_button.grid(column=0,row=0,sticky=tk.NSEW, padx=10, pady=25)
 
         self.state.trace_add("write", lambda *args: self.update_button_text(confirm_button))
 
@@ -211,33 +210,34 @@ class WindowManager:
         self.create_back_button(self.mainFrame)
 
         fileFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
-        tk.Button(fileFrame, text="Open Playlist Archive", command=lambda: self.open_file_and_update(playlist_manager)).pack(padx=10, pady=15)
-        fileFrame.grid(column=1, row=1,sticky=tk.NSEW)
+        tk.Button(fileFrame, text="Open Playlist Archive", command=lambda: self.open_file_and_update(playlist_manager)).pack(padx=10, pady=15, fill='both')
+        fileFrame.grid(column=1, row=1, sticky=tk.NSEW)
 
         statusFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
         statusFrame.grid_columnconfigure(index=0,weight=1,uniform='column') 
         statusFrame.grid_columnconfigure(index=1,weight=1,uniform='column') 
 
-        tk.Label(statusFrame, text="Loaded playlist archive: ").grid(column=0,row=0,sticky=tk.NSEW)
-        self.statusLabel = tk.Label(statusFrame, text="None")
+        tk.Label(statusFrame, text="Loaded playlist archive: ", background="darkred").grid(column=0,row=0,sticky=tk.NSEW)
+        self.statusLabel = tk.Label(statusFrame, text="None", background="darkred")
         self.statusLabel.grid(column=1,row=0,padx=5,sticky=tk.NSEW)
         statusFrame.grid(column=1, row=2,sticky=tk.NSEW)
 
         optionsFrame = tk.LabelFrame(self.mainFrame, bg =WindowManager.__color_main, border=3)
-        optionsFrame.grid_columnconfigure(index=[0,1,2],weight=1,uniform='column', pad=5) 
+        optionsFrame.grid_columnconfigure(index=[0,1,2],weight=1,uniform='column')
+        optionsFrame.grid_rowconfigure(index=0,weight=1,uniform='row')
 
         update_options = [tk.IntVar(),tk.IntVar(),tk.IntVar()]
         cb1 = tk.Checkbutton(optionsFrame, text="Remove unavailable videos from archive") 
-        cb1.config(variable=update_options[0], onvalue=True,offvalue=False, pady=5)
+        cb1.config(variable=update_options[0], onvalue=True,offvalue=False, font=tkF.Font(family="Helvetica",size=10,weight="bold"))
         cb2 = tk.Checkbutton(optionsFrame, text="Add new videos to archive")
-        cb2.config(variable=update_options[1], onvalue=True,offvalue=False, pady=5)
+        cb2.config(variable=update_options[1], onvalue=True,offvalue=False, font=tkF.Font(family="Helvetica",size=10,weight="bold"))
         cb2.select()
         cb3 = tk.Checkbutton(optionsFrame, text="Override archive file")
-        cb3.config(variable=update_options[2], onvalue=True,offvalue=False, pady=5)
+        cb3.config(variable=update_options[2], onvalue=True,offvalue=False, font=tkF.Font(family="Helvetica",size=10,weight="bold"))
 
-        cb1.grid(row=0, column=0, sticky="ew")
-        cb2.grid(row=0, column=1, sticky="ew")
-        cb3.grid(row=0, column=2, sticky="ew")
+        cb1.grid(row=0, column=0, sticky="ew", padx=10, pady=0)
+        cb2.grid(row=0, column=1, sticky="ew", padx=0, pady=0)
+        cb3.grid(row=0, column=2, sticky="ew", padx=10, pady=0)
 
         optionsFrame.grid(column=1, row=4,sticky=tk.NSEW)
 
