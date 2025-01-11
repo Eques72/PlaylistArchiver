@@ -298,10 +298,7 @@ class WindowManager:
 
             success = False
             if self.state.get() == 1:
-                    # os.path.
-                    # filepath = os.path.splitext(filepath)[0] + ("" if update_options_bools[2] else f"_updated_{datetime_str}") + ".json"
                 success = playlist_manager.save_multiple_playlist_records(os.path.split(file_path)[0], True, True)
-                # success = playlist_manager.save_multiple_playlist_records(file_path)
             if self.state.get() == 0:
                 success = playlist_manager.save_playlist_record(file_path, remove_from_list=True)
             if success:

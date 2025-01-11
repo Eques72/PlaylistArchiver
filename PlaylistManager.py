@@ -70,11 +70,15 @@ class PlaylistManager:
         self.playlist_data.append(self.playlist_response_parser.join_header_and_body(h,b))
         pass
 
-    def get_playlist_name(self, playlist_index:int=0) -> str:
+    def get_playlist_name(self, sanitized:bool=False, playlist_index:int=0) -> str:
         if playlist_index < 0 or playlist_index >= len(self.playlist_data):
             return "None"
-        return str(self.playlist_data[playlist_index]["header"]["title"]) if self.playlist_data[playlist_index]["header"]["title"] else "No title"
-    
+        name = str(self.playlist_data[playlist_index]["header"]["title"]) if self.playlist_data[playlist_index]["header"]["title"] else "No title"
+        if sanitized:
+            invalid_chars = r'[<>:"/\\|?*\x00-\x1F]'
+            name = re.sub(invalid_chars, "_", name)
+        return name
+
     def get_playlist_basic_info(self, playlist_index:int=0) -> str:
         if playlist_index < 0 or playlist_index >= len(self.playlist_data):
             return {"title":"None", "channelId":"None", "description":"None", "itemCount":"None"}
