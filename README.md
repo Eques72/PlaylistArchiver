@@ -22,7 +22,7 @@ SPOTIFY_CLIENT_ID = 'Your Spotify Client ID'
 SPOTIFY_CLIENT_SECRET = 'Your Spotify Client Secret ID'
 SPOTIFY_REDIRECT_URI = 'Your Spotify Redirect URL'
 ```
-Developer keys can be obtained here:
+Developer keys can be obtained here:  
 [YouTube for Developers](https://developers.google.com/youtube)  
 [Spotify for Developers](https://developer.spotify.com/)
 
@@ -43,7 +43,7 @@ To download ZIP with the project use this link:
 1. Open Terminal and navigate to the project directory.
 2. Install dependencies if necessary (See [Preconditions](https://github.com/Eques72/PlaylistArchiver?tab=readme-ov-file#preconditions))
 3. Run the CLI tool with the appropriate command:  
-`python main_cli.py --mode <Number from 1-3 range> --single --url <URL to YouTube playlist or channel ID> --path <Input file or output directory>`  
+`python main_cli.py --mode <1, 2 or 3> --single --url <URL to a playlist or channel ID> --path <Input file or output directory>`  
 Eg: `python main_cli.py --mode 1 --single --url https://www.youtube.com/playlist?list=PLbpi6ZahtOH4e5qqR_-Fz0fx64qxYPI5W --path C:\Users\user\Desktop\`
 #### Flags:
 - --mode - Accepts numbers 1, 2 and 3. 1 opens app in 'Create new Archive' mode, 2 opens app in 'Update Archive' mode, 2 opens app in 'Export to Spotify' mode,
