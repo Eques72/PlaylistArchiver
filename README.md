@@ -1,4 +1,4 @@
-# ![WebApp](https://eques72.github.io/PlaylistArchiver/resources/YtArchLogo.png)
+# ![Logo](https://github.com/Eques72/PlaylistArchiver/blob/main/resources/YtArchLogo.png)
 # YT Playlist Archiver
 <table>
 <tr>
@@ -22,29 +22,27 @@ SPOTIFY_CLIENT_SECRET = 'Your Spotify Client Secret ID'
 SPOTIFY_REDIRECT_URI = 'Your Spotify Redirect URL'
 ```
 Developer keys can be obtained here:
-[](https://developers.google.com/youtube)
-[](https://developer.spotify.com/)
+[YouTube for Developers](https://developers.google.com/youtube)
+[Spotify for Developers](https://developer.spotify.com/)
 
-## Versions
-App can be with either CLI or GUI.
 
-## [Usage](https://eques72.github.io/PlaylistArchiver/) 
+## [Usage](https://Eques72.github.io/PlaylistArchiver/) 
 
 ### Preconditions
 Python 3.x and following libraries: googleapiclient, spotipy, dotenv, tkinter.
-Also see [Permissions](##Permissions).
+Also see [Permissions](https://github.com/Eques72/PlaylistArchiver?tab=readme-ov-file#permissions).
 
 ### Clone or download repository
 To clone this repository, use the following command:
 (`git clone https://github.com/Eques72/PlaylistArchiver.git`)
 To download ZIP with the project use this link:
-[](https://github.com/Eques72/PlaylistArchiver/archive/refs/heads/main.zip)
+[Project ZIP](https://github.com/Eques72/PlaylistArchiver/archive/refs/heads/main.zip)
 
 ### CLI usage
 1. Open Terminal and navigate to the project directory.
-2. Install dependencies if necessary (See [Preconditions](###Preconditions))
+2. Install dependencies if necessary (See [Preconditions](https://github.com/Eques72/PlaylistArchiver?tab=readme-ov-file#preconditions))
 3. Run the CLI tool with the appropriate command:
-`python main_cli.py --mode <Number from 1-3 range> --single --url <URL to YouTube playlist or channel ID> --path <Input file or output directory>`
+`python main_cli.py --mode <Number from 1-3 range> --single --url <URL to YouTube playlist or channel ID> --path <Input file or output directory>`  
 Eg: `python main_cli.py --mode 1 --single --url https://www.youtube.com/playlist?list=PLbpi6ZahtOH4e5qqR_-Fz0fx64qxYPI5W --path C:\Users\user\Desktop\`
 #### Flags:
 - --mode - Accepts numbers 1, 2 and 3. 1 opens app in 'Create new Archive' mode, 2 opens app in 'Update Archive' mode, 2 opens app in 'Export to Spotify' mode,
@@ -60,7 +58,7 @@ Eg: `python main_cli.py --mode 1 --single --url https://www.youtube.com/playlist
 4. Follow the on-screen instructions to use the GUI.
 
 ### Custom Front
-If you're interested in creating custom frontend for this application, file [PlaylistManager](https://github.com/Eques72/PlaylistArchiver/PlaylistManager.py) has all public methods that are needed to introduce all present functionalities to your app, both CLI and GUI may serve as an example of usage.
+If you're interested in creating custom frontend for this application, file [PlaylistManager](https://github.com/Eques72/PlaylistArchiver/blob/main/PlaylistManager.py) has all public methods that are needed to introduce all present functionalities to your app, both CLI and GUI may serve as an example of usage.
 
 ### File compatibility
 Files created by the application should not be tinkered with as this may lead to them being unreadable to the app.
@@ -83,5 +81,5 @@ If you find a bug, please open an issue [here](https://github.com/Eques72/Playli
 
 If you'd like to request a new function, do so by opening an issue [here](https://github.com/Eques72/PlaylistArchiver/issues/new).
 
-## [License](https://github.com/Eques72/PlaylistArchiver/LICENSE.md)
+## [License](https://github.com/Eques72/PlaylistArchiver/blob/main/LICENSE.md)
 MIT © [Eques72](https://github.com/Eques72)
