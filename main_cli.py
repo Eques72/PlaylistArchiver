@@ -5,7 +5,7 @@ from datetime import datetime
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="YouTube playlist archiever."
+        description="YouTube playlist archiver."
     )
 
     pM = PlaylistManager()
@@ -75,4 +75,4 @@ if __name__ == "__main__":
         print(f"Playlist exported successfully with {added_elements} elements.")
     print("App executed successfully.")
 
-#python main_cli.py --mode 1 --single --url https://www.youtube.com/playlist?list=PLUIixndCOJ8yNBH3FmtlUTxDj-sfBxPEx --path C:\Users\adria\Desktop\Newfolder
+#python main_cli.py --mode 1 --single --url https://www.youtube.com/playlist?list=PLUIixndCOJ8yNBH3FmtlUTxDj-sfBxPEx --path C:\Users\user\Desktop\Newfolder
