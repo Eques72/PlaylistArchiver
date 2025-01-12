@@ -3,7 +3,8 @@
 <table>
 <tr>
 <td>
-  A desktop app created to store and manage locally data from YouTube playlists. It can pull information from YouTube site and save it to json file, perform updates on json archives by adding or removing positions from the playlists, app can display all mismatches and missing videos from archive and from playlist on YT. Archive can be also exported to Spotify.
+  A desktop app created to store and manage locally data from YouTube playlists. It can pull information from YouTube site and save it to json file, perform updates on json archives by adding or removing positions from the playlists, app can display all mismatches and missing videos from archive and from playlist on YT.  
+  Archive can be also exported to Spotify.
 </td>
 </tr>
 </table>
@@ -22,7 +23,7 @@ SPOTIFY_CLIENT_SECRET = 'Your Spotify Client Secret ID'
 SPOTIFY_REDIRECT_URI = 'Your Spotify Redirect URL'
 ```
 Developer keys can be obtained here:
-[YouTube for Developers](https://developers.google.com/youtube)
+[YouTube for Developers](https://developers.google.com/youtube)  
 [Spotify for Developers](https://developer.spotify.com/)
 
 
@@ -41,7 +42,7 @@ To download ZIP with the project use this link:
 ### CLI usage
 1. Open Terminal and navigate to the project directory.
 2. Install dependencies if necessary (See [Preconditions](https://github.com/Eques72/PlaylistArchiver?tab=readme-ov-file#preconditions))
-3. Run the CLI tool with the appropriate command:
+3. Run the CLI tool with the appropriate command:  
 `python main_cli.py --mode <Number from 1-3 range> --single --url <URL to YouTube playlist or channel ID> --path <Input file or output directory>`  
 Eg: `python main_cli.py --mode 1 --single --url https://www.youtube.com/playlist?list=PLbpi6ZahtOH4e5qqR_-Fz0fx64qxYPI5W --path C:\Users\user\Desktop\`
 #### Flags:
