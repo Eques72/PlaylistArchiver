@@ -1,4 +1,6 @@
 # ![Logo](https://github.com/Eques72/PlaylistArchiver/blob/main/resources/YtArchLogo.png)
+---
+
 # YT Playlist Archiver
 <table>
 <tr>
@@ -8,6 +10,7 @@
 </td>
 </tr>
 </table>
+---
 
 ## Permissions
 User needs to specify its credentials in .env file.
@@ -25,7 +28,7 @@ SPOTIFY_REDIRECT_URI = 'Your Spotify Redirect URL'
 Developer keys can be obtained here:  
 [YouTube for Developers](https://developers.google.com/youtube)  
 [Spotify for Developers](https://developer.spotify.com/)
-
+---
 
 ## [Usage](https://Eques72.github.io/PlaylistArchiver/) 
 
@@ -63,6 +66,7 @@ If you're interested in creating custom frontend for this application, file [Pla
 
 ### File compatibility
 Files created by the application should not be tinkered with as this may lead to them being unreadable to the app.
+---
 
 ## Development
 Want to contribute?
@@ -81,6 +85,7 @@ To fix a bug or enhance an existing functionalities, follow these steps:
 If you find a bug, please open an issue [here](https://github.com/Eques72/PlaylistArchiver/issues/new) by including your search query and the expected result.
 
 If you'd like to request a new function, do so by opening an issue [here](https://github.com/Eques72/PlaylistArchiver/issues/new).
+---
 
 ## [License](https://github.com/Eques72/PlaylistArchiver/blob/main/LICENSE.md)
 MIT © [Eques72](https://github.com/Eques72)
