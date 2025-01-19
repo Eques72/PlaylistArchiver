@@ -12,6 +12,8 @@ class Caller:
     __apiVersion  = "v3"
 
     def __init__(self) -> None:
+        if not os.path.exists(dotenv_path):
+            raise FileNotFoundError(f"{dotenv_path} not found.")
         dotenv.load_dotenv(dotenv_path)
         self.key = os.getenv('KEY')
         self.youtube = googleapiclient.discovery.build(Caller.__apiServiceName,
