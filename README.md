@@ -68,7 +68,7 @@ Eg: `python main_cli.py --mode 1 --single --url https://www.youtube.com/playlist
 4. Follow the on-screen instructions to use the GUI.
 
 ### Custom Front
-If you're interested in creating custom frontend for this application, file [PlaylistManager](https://github.com/Eques72/PlaylistArchiver/blob/main/PlaylistManager.py) has all public methods that are needed to introduce all present functionalities to your app, both CLI and GUI may serve as an example of usage.
+If you're interested in creating custom frontend for this application, file [PlaylistManager](https://github.com/Eques72/PlaylistArchiver/blob/main/src/PlaylistManager.py) has all public methods that are needed to introduce all present functionalities to your app, both CLI and GUI may serve as an example of usage.
 
 ### File compatibility
 Files created by the application should not be tinkered with as this may lead to them being unreadable to the app.

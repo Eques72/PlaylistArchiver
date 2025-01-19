@@ -4,29 +4,15 @@ import googleapiclient.discovery
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
 
-default_playlist_params= {
-    "itemCount": True,
-    "channelTitle": True,
-    "address": True,
-    "channel_address": True,
-    "description": True,
-    "publishedAt": True,
-    "thumbnail": True
-}
-default_video_params= {
-    "channelId": True,
-    "channelTitle": True,
-    "description": True,
-    "videoPublishedAt": True,
-    "thumbnail": True
-}
+dotenv_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), '.env')
+
 #https://jsonviewer.stack.hu/
 class Caller:
     __apiServiceName = "youtube"
     __apiVersion  = "v3"
 
     def __init__(self) -> None:
-        dotenv.load_dotenv()
+        dotenv.load_dotenv(dotenv_path)
         self.key = os.getenv('KEY')
         self.youtube = googleapiclient.discovery.build(Caller.__apiServiceName,
                                                        Caller.__apiVersion,developerKey=self.key)
