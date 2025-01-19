@@ -14,6 +14,9 @@
 
 ---
 
+> [!NOTE]  
+> For detailed description of everything related to the project see [Wiki](https://github.com/Eques72/PlaylistArchiver/wiki). Treat ReadMe file only as a brief guide.
+
 ## Permissions
 User needs to specify its credentials in .env file.
 - Developer Key to YouTube API
