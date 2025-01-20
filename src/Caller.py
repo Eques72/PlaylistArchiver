@@ -79,7 +79,7 @@ class Caller:
             print(f'Error: {e}')
             raise
 
-    def create_spotify_playlist(self, playlist_name:str, playlist_description:str, songs: list):
+    def create_spotify_playlist(self, playlist_name:str, playlist_description:str, songs: list) -> int:
         CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
         CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
         REDIRECT_URI = os.getenv('SPOTIFY_REDIRECT_URI')
@@ -107,10 +107,10 @@ class Caller:
                     track_ids.append(result['tracks']['items'][0]['id'])
 
             for i in range(0, len(track_ids), 100):
-                print(i, ' : ', str(track_ids[i:i+100]))
                 sp.playlist_add_items(playlist_id, track_ids[i:i+100])
 
             print(f'Playlist "{playlist_name}" created successfully, with {len(track_ids)} songs added to it.')
+            return len(track_ids)
         except Exception as e:
             print(f'Error: {e}')
             raise

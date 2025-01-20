@@ -291,10 +291,10 @@ class WindowManager:
             elif self.state.get() == 0:
                 playlist_manager.create_new_playlist_record(addressEntered, choices)
                 pass
-
+            fd.asksaveasfile
             file_path = fd.asksaveasfilename(filetypes=[("Plik JSON","*.json")], defaultextension = "*.json", 
                                             initialdir = "C:/", title = "Choose save location and file name", 
-                                            initialfile = "Leave empty for unique name for each playlist")
+                                            initialfile = "Leave empty for unique name for each playlist" if self.state.get() == 1 else playlist_manager.get_playlist_name())
 
             success = False
             if self.state.get() == 1:
